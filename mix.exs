@@ -48,7 +48,8 @@ defmodule App.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:req, github: "wojtekmach/req"},
-      {:mix_test_watch, "~> 1.0.2"}
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
+      {:timex, "~> 3.7.5"}
     ]
   end
 
