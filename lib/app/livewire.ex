@@ -62,7 +62,7 @@ defmodule App.Crawlers.Livewire do
       name = Floki.text(anchor) |> String.trim()
       datetime_string = Floki.find(row, "p:nth-child(2)") |> Floki.text() |> String.replace(~r/\s+/, " ") |> String.trim()
       with_year = Timex.format!(Timex.now(), "{YYYY}") <> " " <> datetime_string
-      datetime = with_year |> Timex.parse!("{YYYY} {WDfull}, {Mshort} {D} at {h12}:{m}{am}")
+      datetime = Timex.parse!(with_year, "{YYYY} {WDfull}, {Mshort} {D} at {h12}:{m}{am}")
 
       %{
         event_id: event_id,
@@ -106,6 +106,7 @@ defmodule App.Crawlers.Livewire do
 
     venue
     |> Map.merge(address)
+    |> Map.merge(geocode_address(address))
     |> Map.put(:processed, true)
   end
 
@@ -114,6 +115,20 @@ defmodule App.Crawlers.Livewire do
          {:ok, document} <- Floki.parse_document(body) do
       Process.sleep(1_000)
       document
+    end
+  end
+
+  defp geocode_address(%{address: ""}), do: %{}
+
+  defp geocode_address(%{address: address, city: city, state: state, zip: zip}) do
+    full_address = "#{address}, #{city}, #{state} #{zip}"
+    sql = "SELECT ST_X(g.geomout) AS lon, ST_Y(g.geomout) AS lat FROM geocode('#{full_address}') AS g"
+
+    case App.Repo.query(sql, []) do
+      {:ok, %{rows: [[lon, lat]]}} ->
+        %{point: %Geo.Point{coordinates: {lon, lat}, srid: 4326}}
+      _ ->
+        %{}
     end
   end
 end

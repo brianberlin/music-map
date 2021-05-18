@@ -4,6 +4,14 @@ defmodule App.Venues do
   alias App.Venue
   alias App.Repo
 
+  def list_venues do
+    Repo.all(Venue)
+  end
+
+  def delete_venues do
+    Repo.delete_all(Venue, [])
+  end
+
   @spec insert_or_update(map()) :: {:error, Ecto.Changeset.t()} | {:ok, Venue.t()}
   def insert_or_update(%{slug: slug} = attrs) do
     case get_venue_by_slug(slug) do
@@ -23,7 +31,12 @@ defmodule App.Venues do
   defp create_venue(attrs) do
     %Venue{}
     |> change_venue(attrs)
+    |> put_point()
     |> Repo.insert()
+  end
+
+  defp put_point(changeset) do
+    changeset
   end
 
   defp update_venue(venue, attrs) do

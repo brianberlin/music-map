@@ -6,6 +6,10 @@ defmodule App.Shows do
   alias App.Venue
   alias App.Repo
 
+  def delete_shows do
+    Repo.delete_all(Show, [])
+  end
+
   @spec insert_or_update(map()) :: {:error, Ecto.Changeset.t()} | {:ok, Show.t()}
   def insert_or_update(%{event_id: event_id, venue_slug: venue_slug} = attrs) do
     with %Venue{} = venue <- Venues.get_venue_by_slug(venue_slug),

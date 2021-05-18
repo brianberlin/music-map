@@ -49,7 +49,8 @@ defmodule App.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:req, github: "wojtekmach/req"},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:timex, "~> 3.7.5"}
+      {:timex, "~> 3.7.5"},
+      {:geo_postgis, "~> 3.4"}
     ]
   end
 

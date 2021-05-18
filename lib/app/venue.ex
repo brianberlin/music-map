@@ -11,11 +11,12 @@ defmodule App.Venue do
     field :state, :string
     field :web_address, :string
     field :zip, :string
+    field(:point, Geo.PostGIS.Geometry)
 
     timestamps()
   end
 
   def changeset(venue \\ %__MODULE__{}, attrs) do
-    cast(venue, attrs, [:name, :address, :city, :phone, :state, :web_address, :zip, :slug])
+    cast(venue, attrs, [:name, :address, :city, :phone, :state, :web_address, :zip, :slug, :point])
   end
 end
