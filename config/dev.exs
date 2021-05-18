@@ -4,7 +4,7 @@ use Mix.Config
 config :app, App.Repo,
   username: "postgres",
   password: "postgres",
-  database: "music_map_dev",
+  database: "geocoder",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
