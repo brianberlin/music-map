@@ -1,36 +1,49 @@
-// We need to import the CSS so that webpack will load it.
-// The MiniCssExtractPlugin is used to separate it out into
-// its own CSS file.
 import "../css/app.scss"
-
-// webpack automatically bundles all modules in your
-// entry points. Those entry points can be configured
-// in "webpack.config.js".
-//
-// Import deps with the dep name or local files with a relative path, for example:
-//
-//     import {Socket} from "phoenix"
-//     import socket from "./socket"
-//
-import "phoenix_html"
 import {Socket} from "phoenix"
-import topbar from "topbar"
-import {LiveSocket} from "phoenix_live_view"
 
-let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+const socket = new Socket("/socket", {params: {token: csrfToken}})
+const channel = socket.channel("map", {})
 
-// Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
-window.addEventListener("phx:page-loading-start", info => topbar.show())
-window.addEventListener("phx:page-loading-stop", info => topbar.hide())
+channel.join().receive("ok", addVenues)
+socket.connect()
 
-// connect if there are any LiveViews on the page
-liveSocket.connect()
+maplibregl.setRTLTextPlugin('https://cdn.maptiler.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.1.2/mapbox-gl-rtl-text.js');
 
-// expose liveSocket on window for web console debug logs and latency simulation:
-// >> liveSocket.enableDebug()
-// >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
-// >> liveSocket.disableLatencySim()
-window.liveSocket = liveSocket
+var map = new maplibregl.Map({
+  container: 'map',
+  style: window.mapStylePath,
+  center: [-90.0910109, 29.9708579],
+  zoom: 12
+});
 
+function addVenues(venues) {
+  venues.map(addVenue)
+}
+
+function addVenue(venue) {
+  const coordinates = venue.point?.coordinates
+
+  if (coordinates) {
+    new maplibregl.Marker()
+       .setLngLat(coordinates)
+       .setPopup(venuePopup(venue))
+       .addTo(map)
+  }
+}
+
+function venuePopup({name, shows, web_address}) {
+  const linked_name = web_address ? `<a href="${web_address}">${name}</a>` : name
+  
+  const html = `
+    <strong>${linked_name}</strong><br>
+    ${shows.map(showHtml).join("<hr>")}
+  `
+  return new maplibregl.Popup().setHTML(html)
+}
+
+function showHtml({name, datetime}) {
+  const time = new Date(datetime).toLocaleTimeString()
+  
+  return `${name}<br>${time}`
+}

@@ -2,10 +2,13 @@ defmodule App.Venues do
   import Ecto.Query
 
   alias App.Venue
+  alias App.Shows
   alias App.Repo
 
   def list_venues do
-    Repo.all(Venue)
+    Venue
+    |> preload([shows: ^Shows.query_shows()])
+    |> Repo.all()
   end
 
   def delete_venues do

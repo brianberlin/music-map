@@ -6,6 +6,12 @@ defmodule App.Shows do
   alias App.Venue
   alias App.Repo
 
+  def query_shows do
+    Show
+    |> where([s], s.datetime >= ^beginning_of_day_central_time())
+    |> where([s], s.datetime <= ^end_of_day_central_time())
+  end
+
   def delete_shows do
     Repo.delete_all(Show, [])
   end
@@ -43,5 +49,15 @@ defmodule App.Shows do
 
   defp change_show(show, attrs) do
     Show.changeset(show, attrs)
+  end
+
+  defp beginning_of_day_central_time do
+    %{month: month, day: day, year: year} = Timex.now("America/Chicago")
+    NaiveDateTime.from_erl!({{year, month, day}, {0, 0, 0}})
+  end
+
+  defp end_of_day_central_time do
+    %{month: month, day: day, year: year} = Timex.now("America/Chicago")
+    NaiveDateTime.from_erl!({{year, month, day}, {23, 59, 59}})
   end
 end

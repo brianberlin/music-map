@@ -1,20 +1,18 @@
-# App
+# Dependencies
 
-To start your Phoenix server:
+## Nominatim
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Install Node.js dependencies with `npm install` inside the `assets` directory
-  * Start Phoenix endpoint with `mix phx.server`
+```
+docker create volume nominatim;
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+docker run -d -p 8080:8080 \
+-e NOMINATIM_PBF_URL='http://download.geofabrik.de/north-america/us/louisiana-latest.osm.pbf' \
+--name nominatim peterevans/nominatim:latest \
+--mount source=nominatim,target=/srv/nominatim/data
+```
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+## Tile Server
 
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+```
+docker run --rm -d -v (pwd)/map_tiles:/data -p 8181:80 maptiler/tileserver-gl
+```

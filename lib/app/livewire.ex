@@ -121,12 +121,18 @@ defmodule App.Crawlers.Livewire do
   defp geocode_address(%{address: ""}), do: %{}
 
   defp geocode_address(%{address: address, city: city, state: state, zip: zip}) do
-    full_address = "#{address}, #{city}, #{state} #{zip}"
-    sql = "SELECT ST_X(g.geomout) AS lon, ST_Y(g.geomout) AS lat FROM geocode('#{full_address}') AS g"
+    address = String.replace(address, " " , "+")
+    city = String.replace(city, " ", "+")
+    state = String.replace(state, " ", "+")
+    host = Application.get_env(:app, :nominatim_host)
+    %{body: body} = Req.get!("#{host}/search?q=#{address}+#{city}+#{state}+#{zip}&format=json")
 
-    case App.Repo.query(sql, []) do
-      {:ok, %{rows: [[lon, lat]]}} ->
+    case body do
+      [%{"lat" => lat, "lon" => lon} | _] ->
+        {lon, _} = Float.parse(lon)
+        {lat, _} = Float.parse(lat)
         %{point: %Geo.Point{coordinates: {lon, lat}, srid: 4326}}
+
       _ ->
         %{}
     end

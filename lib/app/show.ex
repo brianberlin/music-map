@@ -3,11 +3,14 @@ defmodule App.Show do
   import Ecto.Changeset
   alias App.Venue
 
+  @derive {Jason.Encoder, only: [:event_id, :name, :datetime]}
   schema "shows" do
     field :event_id, :string
     field :name, :string
     field :datetime, :utc_datetime
+
     belongs_to :venue, Venue
+
     timestamps()
   end
 

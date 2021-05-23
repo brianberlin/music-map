@@ -25,7 +25,11 @@
 	"extensions": [
 		"jakebecker.elixir-ls",
 		"mtxr.sqltools",
-		"mtxr.sqltools-driver-pg"
+		"mtxr.sqltools-driver-pg",
+		"wmaurer.change-case",
+		"naumovs.color-highlight",
+		"dbaeumer.vscode-eslint",
+		"eamodio.gitlens",
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
