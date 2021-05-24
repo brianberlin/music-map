@@ -6,10 +6,10 @@ defmodule App.Shows do
   alias App.Venue
   alias App.Repo
 
-  def query_shows do
-    Show
-    |> where([s], s.datetime >= ^beginning_of_day_central_time())
-    |> where([s], s.datetime <= ^end_of_day_central_time())
+  def todays_shows(query) do
+    query
+    |> where([show: s], s.datetime >= ^beginning_of_day_central_time())
+    |> where([show: s], s.datetime <= ^end_of_day_central_time())
   end
 
   def delete_shows do

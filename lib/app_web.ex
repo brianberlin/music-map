@@ -59,6 +59,38 @@ defmodule AppWeb do
     end
   end
 
+  def surface_component do
+    quote do
+      use Surface.Component
+
+      unquote(view_helpers())
+    end
+  end
+
+  def surface_live_component do
+    quote do
+      use Surface.LiveComponent
+
+      unquote(view_helpers())
+    end
+  end
+
+  def surface_live_view do
+    quote do
+      use Surface.LiveView
+
+      unquote(view_helpers())
+    end
+  end
+
+  def surface_macro_component do
+    quote do
+      use Surface.MacroComponent
+
+      unquote(view_helpers())
+    end
+  end
+
   def router do
     quote do
       use Phoenix.Router

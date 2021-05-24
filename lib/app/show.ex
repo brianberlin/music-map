@@ -7,7 +7,7 @@ defmodule App.Show do
   schema "shows" do
     field :event_id, :string
     field :name, :string
-    field :datetime, :utc_datetime
+    field :datetime, :naive_datetime
 
     belongs_to :venue, Venue
 

@@ -5,7 +5,7 @@ config :app, App.Repo,
   username: "postgres",
   password: "postgres",
   database: "music_map_dev",
-  hostname: "localhost",
+  hostname: "db",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10,
   types: App.PostgresTypes
@@ -62,7 +62,8 @@ config :app, AppWeb.Endpoint,
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
       ~r"lib/app_web/(live|views)/.*(ex)$",
-      ~r"lib/app_web/templates/.*(eex)$"
+      ~r"lib/app_web/templates/.*(eex)$",
+      ~r"lib/my_app_web/live/.*(sface)$",
     ]
   ]
 

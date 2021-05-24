@@ -15,7 +15,7 @@
 			"previewLimit": 50,
 			"server": "localhost",
 			"port": 5432,
-			"database": "postgres",
+			"database": "music_map_dev",
 			"username": "postgres",
 			"password": "postgres"
 		}]
@@ -25,15 +25,11 @@
 	"extensions": [
 		"jakebecker.elixir-ls",
 		"mtxr.sqltools",
-		"mtxr.sqltools-driver-pg",
-		"wmaurer.change-case",
-		"naumovs.color-highlight",
-		"dbaeumer.vscode-eslint",
-		"eamodio.gitlens",
+		"mtxr.sqltools-driver-pg"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [4000, 4001, 5432],
+	// "forwardPorts": [4000, 4001, 5432, 8080, 8181],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "mix deps.get"

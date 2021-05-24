@@ -16,10 +16,7 @@ defmodule AppWeb.Router do
 
   scope "/", AppWeb do
     pipe_through :browser
-
-    get "/", PageController, :index
-    get "/tiles", MapController, :index
-    get "/tiles/:z/:x/:y", MapController, :tile
+    live "/", LiveViews.Page
   end
 
   # Other scopes may use custom stacks.

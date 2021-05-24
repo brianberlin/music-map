@@ -6,12 +6,20 @@ defmodule App.Crawlers.Livewire do
 
   @base_url "https://www.wwoz.org"
 
+  def subscribe do
+    Phoenix.PubSub.subscribe(App.PubSub, "shows")
+  end
+
+  def broadcast do
+    Phoenix.PubSub.broadcast!(App.PubSub, "shows", {:venues, Venues.list_venues()})
+  end
+
   def start_link(_) do
-    GenServer.start_link(__MODULE__, [])
+    GenServer.start_link(__MODULE__, %{})
   end
 
   def init(_) do
-    {:ok, [], {:continue, :fetch_calendar}}
+    {:ok, %{}, {:continue, :fetch_calendar}}
   end
 
   def handle_continue(:fetch_calendar, state) do
@@ -47,8 +55,13 @@ defmodule App.Crawlers.Livewire do
   def handle_continue(:save_to_database, %{shows: shows, venues: venues}) do
     Enum.each(venues, &Venues.insert_or_update/1)
     Enum.each(shows, &Shows.insert_or_update/1)
+    broadcast()
+    {:noreply, %{}, {:continue, :wait_and_restart}}
+  end
 
-    {:stop, :normal, nil}
+  def handle_continue(:wait_and_restart, _state) do
+    Process.sleep(1000 * 60 * 15)
+    {:noreply, %{}, {:continue, :fetch_calendar}}
   end
 
   defp get_shows(venue) do
@@ -111,20 +124,21 @@ defmodule App.Crawlers.Livewire do
   end
 
   defp fetch_and_parse(path) do
-    with %{body: body} <- Req.get!(@base_url <> path),
+    with %{body: body} <- Req.get!(@base_url <> path, retry: true),
          {:ok, document} <- Floki.parse_document(body) do
       Process.sleep(1_000)
       document
     end
   end
 
-  defp geocode_address(%{address: ""}), do: %{}
+  def geocode_address(%{address: ""}), do: %{}
 
-  defp geocode_address(%{address: address, city: city, state: state, zip: zip}) do
+  def geocode_address(%{address: address, city: city, state: state, zip: zip}) do
     address = String.replace(address, " " , "+")
     city = String.replace(city, " ", "+")
     state = String.replace(state, " ", "+")
     host = Application.get_env(:app, :nominatim_host)
+    IO.inspect("#{host}/search?q=#{address}+#{city}+#{state}+#{zip}&format=json")
     %{body: body} = Req.get!("#{host}/search?q=#{address}+#{city}+#{state}+#{zip}&format=json")
 
     case body do

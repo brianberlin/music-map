@@ -3,11 +3,14 @@ defmodule App.Venues do
 
   alias App.Venue
   alias App.Shows
+  alias App.Show
   alias App.Repo
 
   def list_venues do
-    Venue
-    |> preload([shows: ^Shows.query_shows()])
+    from(venue in Venue, as: :venue)
+    |> join(:left, [venue: venue], show in Show, on: venue.id == show.venue_id, as: :show)
+    |> Shows.todays_shows()
+    |> preload(:shows)
     |> Repo.all()
   end
 

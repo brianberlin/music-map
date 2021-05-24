@@ -50,7 +50,8 @@ defmodule App.MixProject do
       {:req, github: "wojtekmach/req"},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:timex, "~> 3.7.5"},
-      {:geo_postgis, "~> 3.4"}
+      {:geo_postgis, "~> 3.4"},
+      {:surface, "~> 0.4.0"}
     ]
   end
 
